@@ -22,6 +22,7 @@ const Member = Record({
   id: text,
   name: text,
   email: text,
+  phone: text,
   contributions: Vec(text),
   investments: Vec(text),
 });
@@ -30,6 +31,7 @@ const Member = Record({
 const MemberPayload = Record({
   name: text,
   email: text,
+  phone: text,
 });
 
 // Define a Contribution type for tracking member contributions
@@ -86,6 +88,25 @@ export default Canister({
     return membersStorage.values();
   }),
 
+  updateMember: update(
+    [text, text, text], // Member ID, email, phone
+    Result(Member, ErrorType),
+    (id, email, phone) => {
+      const memberOpt = membersStorage.get(id);
+      if ("None" in memberOpt) {
+        return Err({ NotFound: `Member with id=${id} not found` });
+      }
+      const member = memberOpt.Some;
+      const updatedMember = {
+        ...member,
+        email,
+        phone,
+      };
+      membersStorage.insert(id, updatedMember);
+      return Ok(updatedMember);
+    }
+  ),
+  
   addContribution: update(
     [text, nat64, text], // memberId, amount, date
     Result(Contribution, ErrorType),

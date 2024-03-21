@@ -1,8 +1,9 @@
 service: () -> {
     addContribution: (text, nat64, text) -> (variant {Ok:record {id:text; memberId:text; date:text; amount:nat64}; Err:variant {InvalidPayload:text; NotFound:text}});
     addInvestment: (record {record_type:text; date:text; amount:nat64}) -> (variant {Ok:record {id:text; record_type:text; date:text; amount:nat64; returns:nat64}; Err:variant {InvalidPayload:text; NotFound:text}});
-    addMember: (record {name:text; email:text}) -> (variant {Ok:record {id:text; contributions:vec text; name:text; investments:vec text; email:text}; Err:variant {InvalidPayload:text; NotFound:text}});
+    addMember: (record {name:text; email:text; phone:text}) -> (variant {Ok:record {id:text; contributions:vec text; name:text; investments:vec text; email:text; phone:text}; Err:variant {InvalidPayload:text; NotFound:text}});
     getContributions: () -> (vec record {id:text; memberId:text; date:text; amount:nat64}) query;
     getInvestments: () -> (vec record {id:text; record_type:text; date:text; amount:nat64; returns:nat64}) query;
-    getMembers: () -> (vec record {id:text; contributions:vec text; name:text; investments:vec text; email:text}) query;
+    getMembers: () -> (vec record {id:text; contributions:vec text; name:text; investments:vec text; email:text; phone:text}) query;
+    updateMember: (text, text, text) -> (variant {Ok:record {id:text; contributions:vec text; name:text; investments:vec text; email:text; phone:text}; Err:variant {InvalidPayload:text; NotFound:text}});
 }
