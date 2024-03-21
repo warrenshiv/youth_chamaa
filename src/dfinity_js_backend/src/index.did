@@ -1,15 +1,6 @@
 service: () -> {
-    addEvent: (record {attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; description:text; location:text}) -> (variant {Ok:record {id:text; attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; reservedAmount:nat64; description:text; seller:principal; location:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}});
-    addUser: (record {name:text; email:text; address:text; phone:text}) -> (variant {Ok:record {id:text; tickets:vec text; name:text; email:text; address:text; phone:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}});
-    createTicket: (record {eventId:text; userId:text}) -> (variant {Ok:record {id:text; eventId:text; userName:text; userEmail:text; userId:text; userPhone:text; eventName:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}});
-    getEvent: (text) -> (variant {Ok:record {id:text; attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; reservedAmount:nat64; description:text; seller:principal; location:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}}) query;
-    getEventTickets: (text) -> (vec record {id:text; eventId:text; userName:text; userEmail:text; userId:text; userPhone:text; eventName:text}) query;
-    getEvents: () -> (vec record {id:text; attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; reservedAmount:nat64; description:text; seller:principal; location:text}) query;
-    getTickets: () -> (vec record {id:text; eventId:text; userId:text}) query;
-    getUser: (text) -> (variant {Ok:record {id:text; tickets:vec text; name:text; email:text; address:text; phone:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}}) query;
-    getUserEvents: (text) -> (vec record {id:text; attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; reservedAmount:nat64; description:text; seller:principal; location:text}) query;
-    getUserTickets: (text) -> (vec record {id:text; eventId:text; userName:text; userEmail:text; userId:text; userPhone:text; eventName:text}) query;
-    getUsers: () -> (vec record {id:text; tickets:vec text; name:text; email:text; address:text; phone:text}) query;
-    updateEvent: (record {id:text; attachmentURL:text; startTime:text; maxSlots:nat64; date:text; description:text; location:text}) -> (variant {Ok:record {id:text; attachmentURL:text; startTime:text; title:text; maxSlots:nat64; date:text; reservedAmount:nat64; description:text; seller:principal; location:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}});
-    updateUser: (record {id:text; email:text; address:text; phone:text}) -> (variant {Ok:record {id:text; tickets:vec text; name:text; email:text; address:text; phone:text}; Err:variant {PaymentFailed:text; InvalidPayload:text; NotFound:text; PaymentCompleted:text}});
+    addContribution: (text, nat64, text) -> (variant {Ok:record {id:text; memberId:text; date:text; amount:nat64}; Err:variant {InvalidPayload:text; NotFound:text}});
+    addMember: (record {name:text; email:text}) -> (variant {Ok:record {id:text; contributions:vec text; name:text; investments:vec text; email:text}; Err:variant {InvalidPayload:text; NotFound:text}});
+    getContributions: () -> (vec record {id:text; memberId:text; date:text; amount:nat64}) query;
+    getMembers: () -> (vec record {id:text; contributions:vec text; name:text; investments:vec text; email:text}) query;
 }
