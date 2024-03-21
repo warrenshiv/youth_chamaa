@@ -43,10 +43,17 @@ const Contribution = Record({
 // Define an Investment type for tracking group investments
 const Investment = Record({
   id: text,
-  type: text,
+  record_type: text,
   amount: nat64,
   date: text,
   returns: nat64,
+});
+
+// Investment Payload
+const InvestmentPayload = Record({
+  record_type: text,
+  amount: nat64,
+  date: text,
 });
 
 // Define an error type for handling various operation outcomes
@@ -104,26 +111,28 @@ export default Canister({
     return contributionsStorage.values();
   }),
 
-  // addInvestment: update(
-  //   [text, nat64, text], // type, amount, date
-  //   Result(Investment, ErrorType),
-  //   (type, amount, date) => {
-  //     const newInvestment = {
-  //       id: uuidv4(),
-  //       type,
-  //       amount,
-  //       date,
-  //       returns: 0n,
-  //     };
+  // Investment
+  addInvestment: update(
+    [InvestmentPayload], // type, amount, date
+    Result(Investment, ErrorType),
+    (payload) => {
+      if (!payload.record_type || !payload.amount || !payload.date) {
+        return Err({ InvalidPayload: "Type, amount, and date are required." });
+      }
+      const newInvestment = {
+        id: uuidv4(),
+        ...payload,
+        returns: 0n,
+      };
       
-  //     investmentsStorage.insert(newInvestment.id, newInvestment);
-  //     return Ok(newInvestment);
-  //   }
-  // ),
+      investmentsStorage.insert(newInvestment.id, newInvestment);
+      return Ok(newInvestment);
+    }
+  ),
 
-  // getInvestments: query([], Vec(Investment), () => {
-  //   return investmentsStorage.values();
-  // }),
+  getInvestments: query([], Vec(Investment), () => {
+    return investmentsStorage.values();
+  }),
 });
 
 
