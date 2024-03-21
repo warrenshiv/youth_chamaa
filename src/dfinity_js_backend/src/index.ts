@@ -34,6 +34,20 @@ const MemberPayload = Record({
   phone: text,
 });
 
+const Group = Record({
+  id: text,
+  name: text,
+  description: text,
+  members: Vec(text),
+  discussions: Vec(text),
+});
+
+// Define a payload for addimg or updating group information
+const GroupPayload = Record({
+  name: text,
+  description: text,
+});
+
 // Define a Contribution type for tracking member contributions
 const Contribution = Record({
   id: text,
@@ -64,12 +78,32 @@ const ErrorType = Variant({
   InvalidPayload: text,
 });
 
-// Initialize storage for members, contributions, and investments
+// Initialize storage for groups, members, contributions, and investments
 const membersStorage = StableBTreeMap(0, text, Member);
 const contributionsStorage = StableBTreeMap(1, text, Contribution);
 const investmentsStorage = StableBTreeMap(2, text, Investment);
+const groupsStorage = StableBTreeMap(3, text, Group);
 
 export default Canister({
+  // Group management Functions
+  createGroup: update([GroupPayload], Result(Group, ErrorType), (payload) => {
+    if (typeof payload !== "object" || Object.keys(payload).length === 0) {
+      return Err({ InvalidPayload: "Invalid payload" });
+    }
+    const newGroup = {
+      id: uuidv4(),
+      ...payload,
+      members: [],
+      discussions: [],
+    };
+    groupsStorage.insert(newGroup.id, newGroup);
+    return Ok(newGroup);
+  }),
+
+  getGroups: query([], Vec(Group), () => {
+    return groupsStorage.values();
+  }),
+
   addMember: update([MemberPayload], Result(Member, ErrorType), (payload) => {
     if (!payload.name || !payload.email) {
       return Err({ InvalidPayload: "Name and email are required." });
